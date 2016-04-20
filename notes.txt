@@ -1,0 +1,37 @@
+Generating siblings using the Riak Elixir client
+
+```
+Riak.Bucket.put("user",[n_val: 3, old_vclock: 86400, young_vclock: 20, big_vclock: 50,   small_vclock: 50, allow_mult: true, last_write_wins: false,    basic_quorum: false, notfound_ok: true, write_once: false, precommit: [],   postcommit: [], chash_keyfun: {:riak_core_util, :chash_std_keyfun},   linkfun: {:modfun, :riak_kv_wm_link_walker, :mapreduce_linkfun}, pr: 0,   r: :quorum, w: :quorum, pw: 0, dw: :quorum, rw: :quorum])
+
+o = Riak.Object.create(bucket: "user", key: "hero", data: "han solo")
+Riak.put(o)
+o = Riak.Object.create(bucket: "user", key: "hero", data: "han solo2")
+Riak.put(o)
+Riak.find("user", "hero")
+Riak.resolve("user","hero", 0)
+```
+
+
+** (FunctionClauseError) no function clause matching in :lists.nth/2
+    (stdlib) lists.erl:169: :lists.nth(0, [{{:dict, 3, 16, 16, 8, 80, 48, {[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []}, {{[], [], [], [], [], [], [], [], [], [], [["content-type", 97, 112, 112, 108, 105, 99, 97, 116, 105, 111, 110, 47, 106, 115, 111, 110], ["X-Riak-VTag", 52, 53, 122, 101, 115, 54, 98, 81, 52, 72, 120, 85, 106, 117, 112, 107, 67, 83, 102, 76, 85, 122]], [], [], [["X-Riak-Last-Modified" | {1461, 95734, 503585}]], [], []}}}, "han solo"}, {{:dict, 3, 16, 16, 8, 80, 48, {[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []}, {{[], [], [], [], [], [], [], [], [], [], [["content-type", 97, 112, 112, 108, 105, 99, 97, 116, 105, 111, 110, 47, 106, 115, 111, 110], ["X-Riak-VTag", 50, 67, 106, 89, 77, 65, 114, 76, 68, 83, 118, 66, 80, 106, 75, 116, 67, 112, 57, 122, 68, 105]], [], [], [["X-Riak-Last-Modified" | {1461, 95734, 526602}]], [], []}}}, "han solo2"}])
+     (riakc) src/riakc_obj.erl:199: :riakc_obj.select_sibling/2
+      (riak) lib/riak.ex:317: Riak.resolve/4
+      (riak) lib/riak.ex:314: Riak.resolve/3
+
+
+
+```
+
+----
+
+Riak.Bucket.put("user",[n_val: 1, old_vclock: 86400, young_vclock: 20, big_vclock: 50,   small_vclock: 50, allow_mult: true, last_write_wins: false,    basic_quorum: false, notfound_ok: true, write_once: false, precommit: [],   postcommit: [], chash_keyfun: {:riak_core_util, :chash_std_keyfun},   linkfun: {:modfun, :riak_kv_wm_link_walker, :mapreduce_linkfun}, pr: 0,   r: :quorum, w: :quorum, pw: 0, dw: :quorum, rw: :quorum])
+
+
+```
+user_value_list = Riak.find "user", key
+
+if (is_list(user_value_list)) do
+    Riak.resolve("user", key, 1)
+end
+
+```
